@@ -44,34 +44,21 @@ public class Grafo<T> {
 
         verticeOrigem.adjacentes.add(new Aresta<>(verticeDestino, peso));
 
-        // descomenta para grafo nao direcionado
-        //verticeDestino.adjacentes.add(new Aresta<>(verticeOrigem, peso));
     }
 
     public void adicionarArestaBidirecional(T origem, T destino, float peso) {
-        Vertice<T> verticeOrigem = obterVertice(origem);
-        Vertice<T> verticeDestino = obterVertice(destino);
 
-        if (verticeOrigem == null) {
-            verticeOrigem = new Vertice<>(origem);
-            vertices.add(verticeOrigem);
-        }
-        if (verticeDestino == null) {
-            verticeDestino = new Vertice<>(destino);
-            vertices.add(verticeDestino);
-        }
-
-        verticeOrigem.adjacentes.add(new Aresta<>(verticeDestino, peso));
-
-        verticeDestino.adjacentes.add(new Aresta<>(verticeOrigem, peso));
+        adicionarAresta(origem, destino, peso);
+        adicionarAresta(destino, origem, peso);
     }
 
     public boolean verificacaoDeCiclo() {
         ArrayList<Vertice<T>> visitados = new ArrayList<>();
+        ArrayList<Vertice<T>> visitando = new ArrayList<>();
 
         for (Vertice<T> vertice : vertices) {
             if (!visitados.contains(vertice)) {
-                if (dfsCiclo(vertice, visitados, null)) {
+                if (dfsCiclo(vertice, visitados, visitando)) {
                     return true;
                 }
             }
@@ -79,22 +66,34 @@ public class Grafo<T> {
         return false;
     }
 
-    private boolean dfsCiclo(Vertice<T> atual, ArrayList<Vertice<T>> visitados, Vertice<T> pai) {
-        visitados.add(atual);
+    private boolean dfsCiclo(Vertice<T> atual, ArrayList<Vertice<T>> visitados, ArrayList<Vertice<T>> visitando) {
+        visitando.add(atual);
 
         for (Aresta<T> aresta : atual.adjacentes) {
             Vertice<T> vizinho = aresta.getDestino();
 
+            if (visitando.contains(vizinho)) {
+                System.out.println("Ciclo encontrado:");
+
+                // Imprime o ciclo encontrado (do vizinho até o final da lista visitando)
+                int inicio = visitando.indexOf(vizinho);
+                for (int i = inicio; i < visitando.size(); i++) {
+                    System.out.print(visitando.get(i).dado + " -> ");
+                }
+                System.out.println(vizinho.dado); // fecha o ciclo
+
+                return true;
+            }
+
             if (!visitados.contains(vizinho)) {
-                if (dfsCiclo(vizinho, visitados, atual)) {
+                if (dfsCiclo(vizinho, visitados, visitando)) {
                     return true;
                 }
-            } 
-            
-            else if (pai == null || !vizinho.equals(pai)) {
-                return true; // Encontrou um ciclo
             }
         }
+
+        visitando.remove(atual);
+        visitados.add(atual);
         return false;
     }
 
@@ -106,26 +105,26 @@ public class Grafo<T> {
         }
 
         ArrayList<Vertice<T>> naoVisitados = new ArrayList<>(vertices);
-        ArrayList<Float> distancias = new ArrayList<>();
+        ArrayList<Float> custos = new ArrayList<>();
 
-        // Inicializa todas as distâncias como infinito
+        // Inicializa todas os custo como infinito
         for (int i = 0; i < vertices.size(); i++) {
-            distancias.add(Float.MAX_VALUE);
+            custos.add(Float.MAX_VALUE);
         }
 
-        // Define distância da origem como 0
+        // Define custo da origem como 0
         int indiceOrigem = vertices.indexOf(inicial);
-        distancias.set(indiceOrigem, 0f);
+        custos.set(indiceOrigem, 0f);
 
         while (!naoVisitados.isEmpty()) {
-            // Encontra o vértice com a menor distância
+            // Encontra o vértice com a menor custo
             Vertice<T> atual = null;
-            float menorDistancia = Float.MAX_VALUE;
+            float menorCusto = Float.MAX_VALUE;
 
             for (Vertice<T> v : naoVisitados) {
                 int idx = vertices.indexOf(v);
-                if (distancias.get(idx) < menorDistancia) {
-                    menorDistancia = distancias.get(idx);
+                if (custos.get(idx) < menorCusto) {
+                    menorCusto = custos.get(idx);
                     atual = v;
                 }
             }
@@ -140,17 +139,22 @@ public class Grafo<T> {
                 int indiceVizinho = vertices.indexOf(vizinho);
 
                 if (naoVisitados.contains(vizinho)) {
-                    float novaDistancia = distancias.get(indiceAtual) + aresta.getPeso();
-                    if (novaDistancia < distancias.get(indiceVizinho)) {
-                        distancias.set(indiceVizinho, novaDistancia);
+                    float novoCusto = custos.get(indiceAtual) + aresta.getPeso();
+                    if (novoCusto < custos.get(indiceVizinho)) {
+                        custos.set(indiceVizinho, novoCusto);
                     }
                 }
             }
         }
 
-        System.out.println("Distâncias mínimas a partir de " + origem + ":");
+        System.out.println("Custos mínimas a partir de " + origem + ":");
         for (int i = 0; i < vertices.size(); i++) {
-            System.out.println("Até " + vertices.get(i).dado + ": " + distancias.get(i));
+            float custo = custos.get(i);
+            if (custo == Float.MAX_VALUE) {
+                System.out.println("Até " + vertices.get(i).dado + ": Sem caminho");
+            } else {
+                System.out.println("Até " + vertices.get(i).dado + ": " + custo);
+            }
         }
     }
 
