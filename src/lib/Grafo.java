@@ -1,16 +1,13 @@
 package lib;
 
-import java.io.FileReader;
 import java.util.*;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.BufferedReader;
 
 public class Grafo<T> {
     private ArrayList<Vertice<T>> vertices;
 
 
     public Grafo() {
+
         this.vertices = new ArrayList<>();
     }
 
@@ -23,10 +20,16 @@ public class Grafo<T> {
         return null;
     }
 
-    public void adicionarVertice(T dado){
-        if (obterVertice(dado) == null){
-            vertices.add(new Vertice<>(dado));
+    public Vertice<T> adicionarVertice(T dado){
+
+        Vertice<T> vert = obterVertice(dado);
+        if (vert != null) {
+            return vert;
         }
+
+        Vertice<T> novoVertice = new Vertice<>(dado);
+        this.vertices.add(novoVertice);
+        return novoVertice;
     }
 
     public void adicionarAresta(T origem, T destino, float peso) {
@@ -151,9 +154,9 @@ public class Grafo<T> {
         for (int i = 0; i < vertices.size(); i++) {
             float custo = custos.get(i);
             if (custo == Float.MAX_VALUE) {
-                System.out.println("Até " + vertices.get(i).dado + ": Sem caminho");
+                System.out.println("Até (" + vertices.get(i).dado + "): Sem caminho");
             } else {
-                System.out.println("Até " + vertices.get(i).dado + ": " + custo);
+                System.out.println("Até (" + vertices.get(i).dado + "): " + custo);
             }
         }
     }
@@ -188,9 +191,9 @@ public class Grafo<T> {
 
     public void imprimirGrafo() {
         for (Vertice<T> v : vertices) {
-            System.out.print(v.dado + " -> ");
+            System.out.print("(" + v.dado + ") -> ");
             for (Aresta<T> a : v.adjacentes) {
-                System.out.print(a.getDestino().dado + "(" + a.getPeso() + ") ");
+                System.out.print("(" + a.getDestino().dado + ")" + " (Peso = " + a.getPeso() + ") ");
             }
             System.out.println();
         }
