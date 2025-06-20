@@ -1,4 +1,15 @@
-ADD;ANA;1
-ADD;BERNARDO;2
-ADD;CAIO;3
-REL;1;2;5.0
+ADD;1;Quésia Quevedo
+ADD;2;Sofia Herrera
+ADD;3;Vinícius Ibrahim
+ADD;4;Regina Tavares
+ADD;5;Juliana Holanda
+ADD;6;Henrique Valente
+ADD;7;Kevin Esteves
+ADD;8;Wellington Ortega
+ADD;9;Nelson Lacerda
+ADD;10;Kátia Monteiro
+REL;2;5;9.58
+REL;7;5;3.63
+REL;8;1;9.26
+REL;5;3;6.61
+REL;4;8;8.73

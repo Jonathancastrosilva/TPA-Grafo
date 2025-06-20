@@ -1,6 +1,7 @@
 package app;
 
 import lib.Grafo;
+import lib.Vertice;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -30,8 +31,8 @@ public class Application {
                 String[] partes = linha.split(";");
 
                 if (partes[0].equals("ADD")) {
-                    String nome = partes[1];
-                    String id = partes[2];
+                    String id = partes[1];
+                    String nome = partes[2];
 
                     Trabalhador trabalhador = new Trabalhador(nome, id);
 
@@ -107,7 +108,7 @@ public class Application {
 
             if (opcao.equals("2")){
 
-                System.out.println("Grafo Dos Usuarios");
+                System.out.println("Grafo Da Hierarquia Dos Usuarios");
                 grafo.imprimirGrafo();
 
             }
